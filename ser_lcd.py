@@ -44,25 +44,14 @@ LCD_CURSORMOVE = 0x00
 LCD_MOVERIGHT = 0x04
 LCD_MOVELEFT = 0x00
 
-import os
 import utime
+from _util import try_until_runs
 
 class SerLCD:
     def __init__(self, bus, address=0x72):
         self.address = address
         self.bus = bus
         
-    def try_until_runs(func):
-        """keeps trying to run function until succeeds without IO error"""
-        def wrapper_try_until_runs(*args, **kwargs):
-            while True:
-                try:
-                    return func(*args, **kwargs)
-                except OSError:
-                    print("AAAHHHHH, ut oh you barely escaped")
-                    pass
-        return wrapper_try_until_runs
-
     @try_until_runs   
     def hello_world(self):
         self.bus.writeto(self.address, bytearray(b"hello world"))
