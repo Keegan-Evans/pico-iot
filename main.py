@@ -1,6 +1,6 @@
 from _util import setup_I2C_bus
 #from ser_lcd import SerLCD
-from airquality import SGP30, MEASURE_RAW_SIGNALS
+from air_quality import SGP30, MEASURE_RAW_SIGNALS
 import inspect
 
 i2c = setup_I2C_bus()

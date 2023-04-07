@@ -1,4 +1,4 @@
-# airquality.py
+# air_quality.py
 
 from _util import try_until_runs, SUCCESS, FAILURE, set_timeout
 import time
@@ -7,9 +7,9 @@ INIT_AIR_QUALITY = bytearray([0x20, 0x03])
 MEASURE_AIR_QUALITY = bytearray([0x20, 0x08])
 GET_BASELINE = bytearray([0x20, 0x15])
 SET_BASELINE = bytearray([0x20, 0x1E])
-SET_HUMIDITY = bytearray([0x20, 0x61])
+#SET_HUMIDITY = bytearray([0x20, 0x61])
 MEASURE_TEST = bytearray([0x20, 0x32])
-GET_FEATURE_SET_VERSION = bytearray([0x20, 0x2F])
+#GET_FEATURE_SET_VERSION = bytearray([0x20, 0x2F])
 GET_SERIAL_ID = bytearray([0X36, 0x82])
 MEASURE_RAW_SIGNALS = bytearray([0x20, 0x50])
 CRC_LOOKUP_TABLE = [
@@ -40,9 +40,6 @@ class SGP30:
         self._h2 = ReceivedValue()
         self._ethanol = ReceivedValue()
         self.serialID = ReceivedValue()
-        
-    def start(self):
-        self.init_AirQuality()
         
     def CRC_lookup(self, data):
         CRC = 0xFF
@@ -137,8 +134,10 @@ class SGP30:
             raise e
     
     def set_humidity_compensation(self, comp_value):
-        """NEED HUMIDITY SENSOR CONNECTED TO SYSTEM FOR THIS"""
-        pass
+        """NEED HUMIDITY SENSOR CONNECTED TO SYSTEM FOR THIS, comp_value should be a 16-bit unsigned integer"""
+        self.write(SET_HUMIDITY)
+        humidity_bytes = bytearray([comp_value >>8, comp_value, self.CRC_lookup(comp_value)])
+        self.write(humidity_bytes)
     
     def getSerialID(self):
 
