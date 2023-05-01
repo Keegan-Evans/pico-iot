@@ -15,7 +15,7 @@ class Networker:
     def __init__(self):
         self._connection = None
     
-    def establish_connnection(self):
+    def establish_connection(self):
         try:
             wlan = network.WLAN(network.STA_IF)
             wlan.active(True)
@@ -24,7 +24,7 @@ class Networker:
             assert wlan.isconnected() == True
             return wlan
         except Exception as e:
-            raise e("Unable to establish wifi connection!")
+            raise e #"Unable to establish wifi connection!"
         
         
     @property

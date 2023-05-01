@@ -7,7 +7,7 @@ def crc8(data, table, poly=0x31, init_value=0xFF, final_xor=0x00):
 
     return bytes([crc ^ final_xor])
 
-def create_message_packet(data: str|bytes):
+def create_message_packet(data):
     byte_data = b''
  
     if type(data) == str:

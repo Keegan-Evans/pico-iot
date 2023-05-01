@@ -53,7 +53,7 @@ class SerLCD:
         self.address = address
         self.bus = bus
         self.contrast_val = 150
-        self.contrast_pin = Pin(15, Pin.IN)
+        self._contrast_pin = Pin(15, Pin.IN)
         
     @try_until_runs   
     def write(self, msg):
@@ -77,9 +77,3 @@ class SerLCD:
     @property
     def contrast_pin_state(self):
         return self._contrast_pin.value()
-    
-
-
-
-
-
