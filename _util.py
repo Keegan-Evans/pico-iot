@@ -1,5 +1,4 @@
 from machine import Pin, I2C
-import os
 import time
 import errno
 
@@ -20,8 +19,8 @@ def try_until_runs(func):
         while True:
             try:
                 return func(*args, **kwargs)
-            except OSError(errno.EIO):
-                print("Caught I2C IO error")
+            except OSError as oserr:
+                print(oserr)
                 continue
             except Exception as e:
                 raise e
@@ -30,7 +29,7 @@ def try_until_runs(func):
 
 def set_timeout(seconds):
     def timeout_tryer(func):
-        def timeout_tryer_wrapper(*ars, **kwargs):
+        def timeout_tryer_wrapper(*args, **kwargs):
             start_time = time.mktime(time.gmtime())
             while (time.mktime(time.gmtime()) - start_time) < seconds:
                 return func(*args, **kwargs)

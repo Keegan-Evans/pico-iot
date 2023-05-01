@@ -46,16 +46,22 @@ LCD_MOVELEFT = 0x00
 
 import utime
 from _util import try_until_runs
+from machine import Pin
 
 class SerLCD:
     def __init__(self, bus, address=0x72):
         self.address = address
         self.bus = bus
+        self.contrast_val = 150
+        self.contrast_pin = Pin(15, Pin.IN)
         
     @try_until_runs   
-    def hello_world(self):
-        self.bus.writeto(self.address, bytearray(b"hello world"))
+    def write(self, msg):
+        if type(msg) ==str:
+            msg = msg.encode("utf-8")
+        self.bus.writeto(self.address, msg)
     
+    @try_until_runs
     def clear_screen(self):
         self.bus.writeto(self.address, bytes([0x7C]))
         self.bus.writeto(self.address, bytes([0x2D]))
@@ -63,6 +69,14 @@ class SerLCD:
         
     def contrast(self, contrast):
         self.bus.writeto(self.address, bytearray([0x7C,0x18,contrast]))
+        
+    def increase_contrast(self):
+        self.contrast_val += 5
+        self.contrast(self.contrast_val)
+            
+    @property
+    def contrast_pin_state(self):
+        return self._contrast_pin.value()
     
 
 
