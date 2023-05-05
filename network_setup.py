@@ -30,7 +30,7 @@ class Networker:
             return wlan
         
         except Exception as e:
-            raise e("Unable to connect to broker")
+            raise e #("Unable to connect to broker")
         
         
     @property
