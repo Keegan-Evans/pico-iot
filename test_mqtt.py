@@ -7,7 +7,7 @@ import json
 print("imports")
 wlan = Networker().establish_connection()
 print("wifi connection established")
-client = MQTTClient('sense_board_1', '192.168.1.14', port=1883, keepalive=60)
+client = MQTTClient('sense_board_1', '192.168.1.14', port=1883, keepalive=5)
 print("mqtt broker connection established")
 
 msg_num = 0
