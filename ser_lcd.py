@@ -45,7 +45,7 @@ LCD_MOVERIGHT = 0x04
 LCD_MOVELEFT = 0x00
 
 import utime
-from _util import try_until_runs
+from util import try_until_runs
 from machine import Pin
 
 class SerLCD:

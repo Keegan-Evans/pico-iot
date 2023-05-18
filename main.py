@@ -1,4 +1,4 @@
-from _util import setup_I2C_bus
+from util import setup_I2C_bus
 from ser_lcd import SerLCD
 import time
 from network_setup import Networker
@@ -9,8 +9,8 @@ wlan = Networker.connection
 i2c = setup_I2C_bus()
 
 ### environmental sensor
-environmental_sensor = bme280_int.BME280(i2c=i2c)
-print("environmental measurements:{}".format(environmental_sensor.values))
+#environmental_sensor = bme280_int.BME280(i2c=i2c)
+#print("environmental measurements:{}".format(environmental_sensor.values))
 
 #my_lcd = SerLCD(bus=i2c)
 # my_lcd.clear_screen()    

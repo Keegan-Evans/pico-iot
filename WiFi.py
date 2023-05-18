@@ -22,7 +22,7 @@ class Networker:
             time.sleep_ms(100)
             wlan.connect(secrets.SSID, secrets.PASSWORD)
             assert wlan.isconnected() == True
-            return wlan
+            self._connection = wlan
         except Exception as e:
             raise e #"Unable to establish wifi connection!"
         

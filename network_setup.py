@@ -1,7 +1,7 @@
 import network
 import secrets
 import time
-from _util import set_timeout
+from util import set_timeout
 
 # try:
 #     wlan = network.WLAN(network.STA_IF)
@@ -30,7 +30,7 @@ class Networker:
             return wlan
         
         except Exception as e:
-            raise e #("Unable to connect to broker")
+            raise e #("Unable to establish wireless network connection.")
         
         
     @property

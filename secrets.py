@@ -1,2 +1,2 @@
-SSID = '4CSCC'
-PASSWORD = 'FourCornersComputing'
+SSID = 'sensor_hub'
+PASSWORD = 'FourCorners'
