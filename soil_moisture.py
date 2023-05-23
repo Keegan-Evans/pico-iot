@@ -110,7 +110,9 @@ class Moisture_Sensor:
             
 if __name__ == '__main__':
     from test_setup import setup_for_testing
+    from util import setup_I2C_bus
     wlan, client = setup_for_testing()
+    i2c = setup_I2C_bus()
 
     while True:
         test_ms = Moisture_Sensor(mqtt_handle=client)
