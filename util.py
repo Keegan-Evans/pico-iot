@@ -1,5 +1,5 @@
 from machine import Pin, I2C
-import time
+import utime
 import errno
 
 def setup_I2C_bus():
@@ -7,7 +7,7 @@ def setup_I2C_bus():
               scl=Pin(1, Pin.PULL_UP),
               sda=Pin(0, Pin.PULL_UP),
               freq=100000)
-    time.sleep_ms(100)
+    utime.sleep_ms(100)
     print(i2c.scan())
     return i2c
 
@@ -30,8 +30,8 @@ def try_until_runs(func):
 def set_timeout(seconds):
     def timeout_tryer(func):
         def timeout_tryer_wrapper(*args, **kwargs):
-            start_time = time.mktime(time.gmtime())
-            while (time.mktime(time.gmtime()) - start_time) < seconds:
+            start_time = utime.mktime(utime.gmtime())
+            while (utime.mktime(utime.gmtime()) - start_time) < seconds:
                 return func(*args, **kwargs)
             raise TimeoutError
         return timeout_tryer_wrapper

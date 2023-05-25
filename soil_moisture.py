@@ -10,7 +10,7 @@ print(adc.read_u16())
 #print(adc.read_uv())
 
 class Moisture_Sensor:
-    def __init__(self, mqtt_handle, pin_num=28, sensor_id="soil_moisture_1", topic="sensor", indicator_pin="LED"):
+    def __init__(self, mqtt_handle, pin_num=28, sensor_id="soil_moisture_1", topic="sensor/moisture", indicator_pin="LED"):
        time.sleep_us(100)
 
        self.sensor_id = sensor_id

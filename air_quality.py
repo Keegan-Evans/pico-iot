@@ -1,5 +1,5 @@
 # air_quality.py
-
+from machine import Pin
 from util import try_until_runs, set_timeout
 import utime
 from crc import create_message_packet
@@ -12,20 +12,23 @@ MEASURE_AIR_QUALITY = bytearray([0x20, 0x08])
 MEASURE_RAW_SIGNALS = bytearray([0x20, 0x50])
 
 class SGP30:
-    def __init__(self, bus, mqtt_broker_addr, mqtt_identity='air_quality_sensor', mqtt_port=1883, address=0x58):
+    def __init__(self, bus, mqtt_handler, i2c_address=0x58, indicator_pin="LED", topic="sensor/air_quality", sensor_id="air_quality_1"):
         utime.sleep_ms(10)
 
-        self.address = address
+        self.i2c_address = i2c_address
         self.bus = bus
-        self.mqtt_handler = MQTTClient(mqtt_identity, mqtt_broker_addr, mqtt_port) #TODO setup authenticated connection
-        self.co2 = None
-        self.tvoc = None
+        self.mqtt_handler = mqtt_handler
+        self.co2 = 0x00
+        self.tvoc = 0x00
         self.featureSetVersion = None
-        self.h2 = None
-        self.ethanol = None
+        self.h2 = 0x00
+        self.ethanol = 0x00
         self.serialID = None
         self.start_time = utime.mktime(utime.localtime())
         self.elapsed_time = 0
+        self.indicator_pin = Pin(indicator_pin, Pin.OUT)
+        self.topic = topic
+        self.sensor_id = sensor_id
 
     
     def set_elapsed_time(self):
@@ -34,18 +37,19 @@ class SGP30:
     @set_timeout(10)
     @try_until_runs
     def write(self, msg):
-        self.bus.writeto(self.address, create_message_packet(msg))
+        self.bus.writeto(self.i2c_address, create_message_packet(msg))
 
     @set_timeout(10)
     @try_until_runs
     def read(self, num_bytes):
         readings = bytearray(num_bytes)
-        self.bus.readfrom_into(self.address, readings)
+        self.bus.readfrom_into(self.i2c_address, readings)
         return readings
 
     
     def initAirQuality(self):
         self.write(INIT_AIR_QUALITY)
+        self.indicator_pin.on()
 
 
     def measureAirQuality(self):
@@ -77,31 +81,46 @@ class SGP30:
 
     
     def measurements(self):
+        self.indicator_pin.off()
         self.measureRawSignals()
         self.measureAirQuality()
+        self.indicator_pin.on()
 
-        measurement_values = json.dumps({'co2': int.from_bytes(self.co2, 'big'),
+        measurement_values = json.dumps({self.sensor_id : {'co2': int.from_bytes(self.co2, 'big'),
                               'tvoc': int.from_bytes(self.tvoc, 'big'),
                               'h2': int.from_bytes(self.h2, 'big'),
                               'ethanol': int.from_bytes(self.ethanol, 'big'),
                               'elapsed_time': self.elapsed_time
-                              })
+                              }})
         print(measurement_values)                      
         return measurement_values
 
     def publish(self):
         self.mqtt_handler.connect()
-        self.mqtt_handler.publish('air_quality', self.measurements, qos=0)
+        print(bytes(self.topic, 'utf-8'), "\n", self.measurements)
+        self.mqtt_handler.publish(topic=bytes(self.topic, 'utf-8'), msg=self.measurements(), qos=0)
         self.mqtt_handler.disconnect()
         
 
 if __name__ == '__main__':
+    from umqtt.simple import MQTTClient
+    from network_setup import Networker
     from util import setup_I2C_bus
+    
+    wlan = Networker().establish_connection()
+    print("wlan")
+
+    client = MQTTClient('aq_board', '10.42.0.1', port=1883, keepalive=60)
+    print("mqtt")
 
     i2c = setup_I2C_bus()
+    print("i2c")
 
-    test_aq = SGP30(bus=i2c, mqtt_broker_addr='192.168.0.5')
+    test_aq = SGP30(bus=i2c, mqtt_handler=client)
+    test_aq.initAirQuality()
 
     while True:
+
+       print(test_aq.measurements())
        test_aq.publish()
-       utime.sleep_ms(250)
+       utime.sleep_ms(180)
