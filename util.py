@@ -1,11 +1,15 @@
 from machine import Pin, I2C
 import utime
-import errno
+#import errno
 
-def setup_I2C_bus():
-    i2c = I2C(0,
-              scl=Pin(1, Pin.PULL_UP),
-              sda=Pin(0, Pin.PULL_UP),
+bus = {'bus_0': (0, 1, 0), 'bus_1': (1, 3, 2)}
+
+def setup_I2C_bus(bus_num='bus_0'):
+    i2c = I2C(bus[bus_num][0],
+              scl=Pin(bus[bus_num][1],
+                      Pin.PULL_UP),
+              sda=Pin(bus[bus_num][2],
+                      Pin.PULL_UP),
               freq=100000)
     utime.sleep_ms(100)
     print(i2c.scan())

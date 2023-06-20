@@ -12,7 +12,7 @@ MEASURE_AIR_QUALITY = bytearray([0x20, 0x08])
 MEASURE_RAW_SIGNALS = bytearray([0x20, 0x50])
 
 class SGP30:
-    def __init__(self, bus, mqtt_handler, i2c_address=0x58, indicator_pin="LED", topic="sensor/air_quality", sensor_id="air_quality_1"):
+    def __init__(self, bus, mqtt_handler, i2c_address=0x58, indicator_pin="LED", topic="sensor/air_quality", sensor_id="air_quality"):
         utime.sleep_ms(10)
 
         self.i2c_address = i2c_address
