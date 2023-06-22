@@ -21,11 +21,10 @@ class Networker:
         try:
             wlan = network.WLAN(network.STA_IF)
             wlan.active(True)
-            time.sleep_ms(100)
             wlan.connect(secrets.SSID, secrets.PASSWORD)
             
             while wlan.isconnected() is not True:
-                time.sleep_ms(500)
+                time.sleep(1)
                 
             return wlan
         
@@ -36,5 +35,5 @@ class Networker:
     @property
     def connection(self):
         if self._connection is None:
-            self.establish_connection()
+            self._connection = self.establish_connection()
         return self._connection

@@ -1,3 +1,4 @@
+#
 from air_quality import SGP30
 from umqtt.simple import MQTTClient
 from network_setup import Networker
@@ -11,7 +12,7 @@ try:
 except Exception as e:
    raise e
 
-client = MQTTClient('aq_board_D', '10.42.0.1', port=1883, keepalive=60)
+client = MQTTClient('aq_D', '10.42.0.1', port=1883, keepalive=15)
 print("mqtt")
 
 i2c_0 = setup_I2C_bus(bus_num='bus_0')
@@ -29,4 +30,4 @@ aq_2.initAirQuality()
 while True:
    aq_1.publish()
    aq_2.publish()
-   utime.sleep_ms(500)
+   utime.sleep_ms(200)

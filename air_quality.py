@@ -86,12 +86,16 @@ class SGP30:
         self.measureAirQuality()
         self.indicator_pin.on()
 
-        measurement_values = json.dumps({self.sensor_id : {'co2': int.from_bytes(self.co2, 'big'),
-                              'tvoc': int.from_bytes(self.tvoc, 'big'),
-                              'h2': int.from_bytes(self.h2, 'big'),
-                              'ethanol': int.from_bytes(self.ethanol, 'big'),
-                              'elapsed_time': self.elapsed_time
-                              }})
+        measurement_values = json.dumps(
+            {'sensor': self.sensor_id, 
+             'data':
+                {'co2': int.from_bytes(self.co2, 'big'),
+                 'tvoc': int.from_bytes(self.tvoc, 'big'),
+                 'h2': int.from_bytes(self.h2, 'big'),
+                 'ethanol': int.from_bytes(self.ethanol, 'big'),
+                 'elapsed_time': self.elapsed_time
+                }})
+
         print(measurement_values)                      
         return measurement_values
 
