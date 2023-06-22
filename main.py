@@ -1,33 +1,39 @@
-#
-from air_quality import SGP30
-from umqtt.simple import MQTTClient
-from network_setup import Networker
-from util import setup_I2C_bus
+# Ensure pico has correct libraries installed
+# If you need to install additional libraries, add appropriate lines to `_setup_scripts/installer.py`.
+try:
+    from umqtt.simple import MQTTClient
+except Exception as e:
+   import _setup_srcipts.installer
+
+### Your Sensor Modules
+from <your_sensor_file> import <YourSensorClass>
+
+### Device Setup Modules
+from util import setup_I2C_bus, Networker
+
+### built-in modules
 import utime
 
-print("trying to connect....")
-try:
-    wlan = Networker().establish_connection()
-    print("wlan")
-except Exception as e:
-   raise e
+### Setup Pico
+# Setup Wifi
+print("Connecting to wifi...")
+wlan = Networker().establish_connection()
+print("Wifi Connection Established")
 
+# Setup I2C buses
+print("Setting up I2C buses...")
+I2C, device_bus_number = setup_I2C_bus(bus_num='bus_0')
+print("I2C bus #{} establis".format(device_bus_number))
+
+# Setup MQTT
 client = MQTTClient('aq_D', '10.42.0.1', port=1883, keepalive=15)
 print("mqtt")
 
-i2c_0 = setup_I2C_bus(bus_num='bus_0')
-print("i2c_0")
-
-i2c_1 = setup_I2C_bus(bus_num='bus_1')
-print("i2c_1")
-
-aq_1 = SGP30(bus=i2c_0, mqtt_handler=client, sensor_id='aq_D1')
-aq_1.initAirQuality()
-
-aq_2 = SGP30(bus=i2c_1, mqtt_handler=client, sensor_id='aq_D2')
-aq_2.initAirQuality()
+### Setup Sensors
+sensor = <YourSensorClass>(bus=i2c_0, mqtt_handler=client, sensor_id='aq_D1')
 
 while True:
-   aq_1.publish()
-   aq_2.publish()
-   utime.sleep_ms(200)
+   sensor.publish()
+
+   # additional housekeeping code
+   # addiotional code for sleep/power management
