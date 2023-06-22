@@ -1,8 +1,7 @@
 # air_quality.py
 from machine import Pin
-from util import try_until_runs, set_timeout
+from util import  create_message_packet, try_until_runs, set_timeout, Networker
 import utime
-from crc import create_message_packet
 from umqtt.simple import MQTTClient
 
 import json
@@ -108,7 +107,7 @@ class SGP30:
 
 if __name__ == '__main__':
     from umqtt.simple import MQTTClient
-    from network_setup import Networker
+    from util import Networker
     from util import setup_I2C_bus
     
     wlan = Networker().establish_connection()
