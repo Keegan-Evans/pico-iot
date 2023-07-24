@@ -3,7 +3,7 @@ from machine import Pin
 from util import try_until_runs, set_timeout
 import utime
 from crc import create_message_packet
-from umqtt.simple import MQTTClient
+from umqtt_simple import MQTTClient
 
 import json
 
@@ -12,7 +12,7 @@ MEASURE_AIR_QUALITY = bytearray([0x20, 0x08])
 MEASURE_RAW_SIGNALS = bytearray([0x20, 0x50])
 
 class SGP30:
-    def __init__(self, bus, mqtt_handler, i2c_address=0x58, indicator_pin="LED", topic="sensor/air_quality", sensor_id="air_quality"):
+    def __init__(self, bus, mqtt_handler, i2c_address=0x58, indicator_pin="LED", topic="sensor_data/air_quality", sensor_id="air_quality"):
         utime.sleep_ms(10)
 
         self.i2c_address = i2c_address
@@ -30,7 +30,7 @@ class SGP30:
         self.topic = topic
         self.sensor_id = sensor_id
 
-    
+
     def set_elapsed_time(self):
         self.elapsed_time = utime.mktime(utime.localtime()) - self.start_time
 
@@ -46,7 +46,7 @@ class SGP30:
         self.bus.readfrom_into(self.i2c_address, readings)
         return readings
 
-    
+
     def initAirQuality(self):
         self.write(INIT_AIR_QUALITY)
         self.indicator_pin.on()
@@ -58,7 +58,7 @@ class SGP30:
         utime.sleep_ms(50)
         read_vals = self.read(6)
         self.set_elapsed_time()
-        
+
         # No real values are returned for the co2 or tvoc values until
         # 15 seconds after the initialization of the sensor so that
         # proper calibration can occur
@@ -79,7 +79,7 @@ class SGP30:
         self.ethanol = bytearray([read_vals[3] << 8 | read_vals[4]])
         return None
 
-    
+
     def measurements(self):
         self.indicator_pin.off()
         self.measureRawSignals()
@@ -87,7 +87,7 @@ class SGP30:
         self.indicator_pin.on()
 
         measurement_values = json.dumps(
-            {'sensor': self.sensor_id, 
+            {'sensor': self.sensor_id,
              'data':
                 {'co2': int.from_bytes(self.co2, 'big'),
                  'tvoc': int.from_bytes(self.tvoc, 'big'),
@@ -96,7 +96,7 @@ class SGP30:
                  'elapsed_time': self.elapsed_time
                 }})
 
-        print(measurement_values)                      
+        print(measurement_values)
         return measurement_values
 
     def publish(self):
@@ -104,13 +104,13 @@ class SGP30:
         print(bytes(self.topic, 'utf-8'), "\n", self.measurements)
         self.mqtt_handler.publish(topic=bytes(self.topic, 'utf-8'), msg=self.measurements(), qos=0)
         self.mqtt_handler.disconnect()
-        
+
 
 if __name__ == '__main__':
     from umqtt.simple import MQTTClient
     from network_setup import Networker
     from util import setup_I2C_bus
-    
+
     wlan = Networker().establish_connection()
     print("wlan")
 

@@ -1,9 +1,15 @@
 #
+from machine import WDT
 from air_quality import SGP30
-from umqtt.simple import MQTTClient
+from umqtt_simple import MQTTClient
 from network_setup import Networker
 from util import setup_I2C_bus
 import utime
+
+# watchdog timer to reset if errors
+wdt = WDT()
+
+# network connection
 
 print("trying to connect....")
 try:
@@ -12,22 +18,19 @@ try:
 except Exception as e:
    raise e
 
-client = MQTTClient('aq_D', '10.42.0.1', port=1883, keepalive=15)
+# MQTT stuff
+SENSOR_ID = 'TESTING_C3'
+BROKER_ADDR =  '192.168.10.1'
+client = MQTTClient(SENSOR_ID, BROKER_ADDR, port=1883, keepalive=10)
 print("mqtt")
 
 i2c_0 = setup_I2C_bus(bus_num='bus_0')
 print("i2c_0")
 
-i2c_1 = setup_I2C_bus(bus_num='bus_1')
-print("i2c_1")
-
-aq_1 = SGP30(bus=i2c_0, mqtt_handler=client, sensor_id='aq_D1')
+aq_1 = SGP30(bus=i2c_0, mqtt_handler=client, sensor_id=SENSOR_ID)
 aq_1.initAirQuality()
-
-aq_2 = SGP30(bus=i2c_1, mqtt_handler=client, sensor_id='aq_D2')
-aq_2.initAirQuality()
 
 while True:
    aq_1.publish()
-   aq_2.publish()
+   wdt.feed()
    utime.sleep_ms(200)
