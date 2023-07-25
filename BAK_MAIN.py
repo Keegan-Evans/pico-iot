@@ -1,12 +1,8 @@
 # Ensure pico has correct libraries installed
-# If you need to install additional libraries, add appropriate lines to `_setup_scripts/installer.py`.
-try:
-    from umqtt.simple import MQTTClient
-except Exception as e:
-   import _setup_srcipts.installer
+from umqtt_simple import MQTTClient
 
-### Your Sensor Modules
-from <your_sensor_file> import <YourSensorClass>
+#### Your Sensor Modules
+#from <your_sensor_file> import <YourSensorClass>
 
 ### Device Setup Modules
 from util import setup_I2C_bus, Networker
@@ -29,11 +25,11 @@ print("I2C bus #{} establis".format(device_bus_number))
 client = MQTTClient('aq_D', '10.42.0.1', port=1883, keepalive=15)
 print("mqtt")
 
-### Setup Sensors
-sensor = <YourSensorClass>(bus=i2c_0, mqtt_handler=client, sensor_id='aq_D1')
+#### Setup Sensors
+#sensor = <YourSensorClass>(bus=i2c_0, mqtt_handler=client, sensor_id='aq_D1')
 
-while True:
-   sensor.publish()
+#while True:
+#   sensor.publish()
 
    # additional housekeeping code
    # addiotional code for sleep/power management
