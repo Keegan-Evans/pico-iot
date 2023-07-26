@@ -17,19 +17,6 @@ FAILURE = 1
 # Util Functions
 ####################################################################################################
 
-# Sensor ID options
-def set_sensor_id():
-    sen_num_0 = Pin(18, Pin.IN)
-    sen_num_1 = Pin(19, Pin.IN)
-    sen_num_2 = Pin(20, Pin.IN)
-    sen_num_3 = Pin(21, Pin.IN)
-    print(sen_num_0, sen_num_1, sen_num_2, sen_num_3)
-
-    #ID = ''
-    #return ID
-
-# CRC calculation
-
 def crc8(data, table, poly=0x31, init_value=0xFF, final_xor=0x00):
     crc = init_value
 
