@@ -10,5 +10,6 @@
     ],
     "picowgo.syncFolder": "",
     "picowgo.openOnStart": true,
-    "python.analysis.autoImportCompletions": true
+    "python.analysis.autoImportCompletions": true,
+    "ansible.python.interpreterPath": "/Users/keeganevans/miniconda3/bin/python"
 }

@@ -1,0 +1,51 @@
+- name: setup micropython library and build tools
+  hosts: all
+  tasks:
+  - name: create workspace
+    ansible.builtin.file:
+      path: "/home/beta/pico"
+      recurse: yes
+      state: directory
+      mode: 0755
+
+  - name: get micropython library
+    ansible.builtin.git:
+      repo: git@github.com:micropython/micropython.git
+      clone: yes
+      dest: "/home/beta/pico"
+
+  - name: copy module files
+    ansible.builtin.copy:
+      src: "./*.py"
+      dest: "/home/beta/pico/micropython/ports/rp2/modules/"
+
+  - name: make preliminaries
+    ansible.builtin.command:
+      cmd: "make BOARD=PICO_W -C ports/rp2 submodules"
+
+  - name: update
+    ansible.builtin.apt:
+      update_cache: yes
+      cache_valid_time: 3600
+
+  - name: upgrade
+    ansible.builtin.apt:
+      upgrade: dist
+
+  - name: install board specific tools
+    ansible.builtin.apt:
+      pkg:
+        - cmake
+        - gcc-arm-none-eabi
+        - libnewlib-arm-none-eabi
+        - build-essential
+      state: present
+
+  - name: make mpy-cross
+    ansible.builtin.command:
+      cmd: "make -C /home/beta/pico/mpy-cross/"
+
+  - name: build port
+    ansible.builtin.command:
+      cmd: "make BOARD=PICO_W /home/beta/pico/ports/rp2/"
+

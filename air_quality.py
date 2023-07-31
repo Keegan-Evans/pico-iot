@@ -102,7 +102,7 @@ class SGP30:
     def publish(self):
         self.mqtt_handler.connect()
         print(bytes(self.topic, 'utf-8'), "\n", self.measurements)
-        self.mqtt_handler.publish(topic=bytes(self.topic, 'utf-8'), msg=self.measurements(), qos=0)
+        self.mqtt_handler.publish(topic=bytes(self.topic, 'utf-8'), msg=self.measurements(), qos=1)
         self.mqtt_handler.disconnect()
 
 
