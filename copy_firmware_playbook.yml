@@ -1,0 +1,6 @@
+name: copy-firmware-to-pico
+hosts: localhost
+tasks:
+  - name: check-for-connected-pico
+    ansible.builtin.shell:
+    cmd: ""
