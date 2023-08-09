@@ -21,8 +21,10 @@ except Exception as e:
 SENSOR_ID = 'air_quality'
 BROKER_ADDR =  '10.42.0.1'
 client = MQTTClient(SENSOR_ID, BROKER_ADDR, port=1883, keepalive=10)
+print("mqtt")
 
 i2c_0 = setup_I2C_bus(bus_num='bus_0')
+print("i2c_0")
 
 aq_0 = SGP30(bus=i2c_0, mqtt_handler=client, sensor_id=SENSOR_ID)
 aq_0.initAirQuality()
