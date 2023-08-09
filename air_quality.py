@@ -93,7 +93,6 @@ class SGP30:
                  'tvoc': int.from_bytes(self.tvoc, 'big'),
                  'h2': int.from_bytes(self.h2, 'big'),
                  'ethanol': int.from_bytes(self.ethanol, 'big'),
-                 'elapsed_time': self.elapsed_time
                 }})
 
         print(measurement_values)
@@ -106,25 +105,26 @@ class SGP30:
         self.mqtt_handler.disconnect()
 
 
-if __name__ == '__main__':
-    from umqtt.simple import MQTTClient
-    from network_setup import Networker
-    from util import setup_I2C_bus
-
-    wlan = Networker().establish_connection()
-    print("wlan")
-
-    client = MQTTClient('aq_board', '10.42.0.1', port=1883, keepalive=60)
-    print("mqtt")
-
-    i2c = setup_I2C_bus()
-    print("i2c")
-
-    test_aq = SGP30(bus=i2c, mqtt_handler=client)
-    test_aq.initAirQuality()
-
-    while True:
-
-       print(test_aq.measurements())
-       test_aq.publish()
-       utime.sleep_ms(180)
+# if __name__ == '__main__':
+    # from umqtt.simple import MQTTClient
+    # from network_setup import Networker
+    # from util import setup_I2C_bus
+# 
+    # wlan = Networker().establish_connection()
+    # print("wlan")
+# 
+    # client = MQTTClient('air_quality', '10.42.0.1', port=1883, keepalive=60)
+    # print("mqtt")
+# 
+    # i2c = setup_I2C_bus()
+    # print("i2c")
+# 
+    # test_aq = SGP30(bus=i2c, mqtt_handler=client)
+    # test_aq.initAirQuality()
+# 
+    # while True:
+# 
+    #    print(test_aq.measurements())
+    #    test_aq.publish()
+    #    utime.sleep_ms(180)
+# 

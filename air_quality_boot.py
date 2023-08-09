@@ -11,7 +11,6 @@ wdt = WDT()
 
 # network connection
 
-print("trying to connect....")
 try:
     wlan = Networker().establish_connection()
     print("wlan")
@@ -22,15 +21,13 @@ except Exception as e:
 SENSOR_ID = 'air_quality'
 BROKER_ADDR =  '10.42.0.1'
 client = MQTTClient(SENSOR_ID, BROKER_ADDR, port=1883, keepalive=10)
-print("mqtt")
 
 i2c_0 = setup_I2C_bus(bus_num='bus_0')
-print("i2c_0")
 
-aq_1 = SGP30(bus=i2c_0, mqtt_handler=client, sensor_id=SENSOR_ID)
-aq_1.initAirQuality()
+aq_0 = SGP30(bus=i2c_0, mqtt_handler=client, sensor_id=SENSOR_ID)
+aq_0.initAirQuality()
 
 while True:
-   aq_1.publish()
+   aq_0.publish()
    wdt.feed()
    utime.sleep_ms(200)
