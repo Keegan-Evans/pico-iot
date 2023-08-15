@@ -64,7 +64,6 @@ class SensorDriver:
     # TODO: implement 7 segment display class
     # TODO: implement method to create and register appropriate database tables
 
-    # TODO: TEST method to intialize network connection
     def _establish_network_connection(self):
         wlan = network.WLAN(network.STA_IF)
         wlan.active(True)
@@ -83,10 +82,6 @@ class SensorDriver:
         self.sensor_status = self.status_codes[('network', 'connection_established')]
 
 
-
-    # TODO: TEST method to intialize MQTT connection
-    # test good
-    # test unable to establish connection
     def _establish_mqtt_connection(self):
         if self.network_connection is None:
             self._establish_network_connection()
@@ -114,6 +109,7 @@ class SensorDriver:
             
             
 if __name__ == '__main__':
+    print(dir(SensorDriver().methods))
     # tests to be moved to own file after development
     def test_instantiation():
         sensor_driver = SensorDriver()
@@ -188,5 +184,5 @@ if __name__ == '__main__':
     # print('test: establish_mqtt_connection_error')
     # test_establish_mqtt_connection_error()
 
-    print('test: mqtt_handler_establishes_network_connection')
-    test_mqtt_handler_establishes_network_connection()
+    # print('test: mqtt_handler_establishes_network_connection')
+    # test_mqtt_handler_establishes_network_connection()
