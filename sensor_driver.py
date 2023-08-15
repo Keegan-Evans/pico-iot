@@ -156,7 +156,6 @@ if __name__ == '__main__':
 
         assert test_driver.sensor_status == test_driver.status_codes[('mqtt', 'connection_established')]
 
-    # TODO: implement test for catching mqtt connection error
     def test_establish_mqtt_connection_error():
         test_driver = SensorDriver(mqtt_broker_address = 'bogus_broker_address')
         test_driver._establish_mqtt_connection()
@@ -186,5 +185,8 @@ if __name__ == '__main__':
     # print('test: establish_mqtt_connection_good')
     # test_establish_mqtt_connection_good()
 # 
-    print('test: establish_mqtt_connection_error')
-    test_establish_mqtt_connection_error()
+    # print('test: establish_mqtt_connection_error')
+    # test_establish_mqtt_connection_error()
+
+    print('test: mqtt_handler_establishes_network_connection')
+    test_mqtt_handler_establishes_network_connection()
