@@ -11,4 +11,5 @@
     "picowgo.syncFolder": "",
     "picowgo.openOnStart": true,
     "python.analysis.autoImportCompletions": true
+
 }

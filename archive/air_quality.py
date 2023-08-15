@@ -1,4 +1,6 @@
 # air_quality.py
+# ignore this file for now
+
 from machine import Pin
 from util import  create_message_packet, try_until_runs, set_timeout, Networker
 import utime

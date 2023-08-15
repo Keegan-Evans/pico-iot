@@ -4,6 +4,7 @@
 # for pylance:
 # type: ignore
 
+from tests import test_sensor_driver
 from umqtt_simple import MQTTClient
 import network
 
@@ -30,6 +31,9 @@ class SensorDriver:
         self.sensor_measurements = sensor_measurements
         self.SSID = SSID
         self.PASSWORD = network_password
+
+        # TODO: enable logging, display, or transmission of exceptions
+        self.most_recent_exception = None
 
         # TODO: TEST status_codes
         self.status_codes = {
@@ -67,7 +71,7 @@ class SensorDriver:
 
         if self.SSID not in [found_network[0].decode() for found_network in wlan.scan()]:
             self.sensor_status = self.status_codes[('network', 'not_connected_target_network_not_found')]
-            break
+            return None
 
 
         wlan.connect(self.SSID, self.PASSWORD)
@@ -82,17 +86,105 @@ class SensorDriver:
 
     # TODO: TEST method to intialize MQTT connection
     # test good
-    # test no network connection
-    # test broker unreachable
+    # test unable to establish connection
     def _establish_mqtt_connection(self):
+        if self.network_connection is None:
+            self._establish_network_connection()
         try:
-            client = MQTTClient(self.sensor_id, self.mqtt_broker_address, port=1883, keepalive=15)
-            self.mqtt_client = client
+            client = MQTTClient(self.sensor_id, self.mqtt_broker_address, port=1883, keepalive=3)
+            client.connect()
             self.sensor_status = self.status_codes[('mqtt', 'connection_established')]
+            self.mqtt_client = client
+            return None
+        except OSError as e:
+            self.most_recent_exception = e
+            if e.args[0] == -2:
+                print('Unable to connect to MQTT broker, unreachable')
+                self.sensor_status = self.status_codes[('mqtt', 'connection_error_broker_unreachable')]
+            else:
+                print('Unable to connect to MQTT broker: {}'.format(e.args[0]))
+                self.sensor_status = self.status_codes[('mqtt', 'connection_error')]
+            return None
         except Exception as e:
-            self.sensor_status = self.status_codes[('mqtt', 'unable_to_establish_connection')]
-            raise e
+            self.most_recent_exception = e
+            self.sensor_status = self.status_codes[('mqtt', 'connection_error')]
+            return None
             
 
             
             
+if __name__ == '__main__':
+    # tests to be moved to own file after development
+    def test_instantiation():
+        sensor_driver = SensorDriver()
+        assert isinstance(sensor_driver, SensorDriver)
+
+    def test_default_class_attributes():
+        sensor_driver = SensorDriver()
+
+        expected_attributes = ['i2c_bus', 'i2c_address', 'network_connection', 'mqtt_client', 'sensor_pins', 'topic', 'sensor_id', 'indicator_pin',
+        'i2c_command_dict', 'sensor_measurements']
+
+        for attribute in expected_attributes:
+            try:
+                assert hasattr(sensor_driver, attribute)
+            except AssertionError:
+                print(f"Attribute {attribute} not found in SensorDriver class")
+                raise AssertionError
+
+    # TODO: finish method to create measurement methods
+    def test_create_measurement_methods():
+        test_driver = SensorDriver(sensor_measurements = ['temperature', 'humidity', 'pressure', 'altitude'])
+        print(test_driver.__dict__)
+        #print(inspect.getmembers(test_driver))
+
+    def test_establish_network_connection():
+        test_driver = SensorDriver()
+        test_driver._establish_network_connection()
+
+        assert test_driver.sensor_status == test_driver.status_codes[('network', 'connection_established')]
+
+    def test_establish_network_connection_target_network_not_found():
+        test_driver = SensorDriver(SSID = 'bogus_network')
+        test_driver._establish_network_connection()
+
+        assert test_driver.sensor_status == test_driver.status_codes[('network', 'not_connected_target_network_not_found')]
+
+    def test_establish_mqtt_connection_good():
+        test_driver = SensorDriver()
+        test_driver._establish_mqtt_connection()
+
+        assert test_driver.sensor_status == test_driver.status_codes[('mqtt', 'connection_established')]
+
+    # TODO: implement test for catching mqtt connection error
+    def test_establish_mqtt_connection_error():
+        test_driver = SensorDriver(mqtt_broker_address = 'bogus_broker_address')
+        test_driver._establish_mqtt_connection()
+
+        assert test_driver.sensor_status == test_driver.status_codes[('mqtt', 'connection_error_broker_unreachable')]
+
+    def test_mqtt_handler_establishes_network_connection():
+        test_sensor_driver = SensorDriver()
+        assert test_sensor_driver.network_connection is None
+
+        test_sensor_driver._establish_mqtt_connection()
+        assert test_sensor_driver.network_connection is not None
+
+
+
+
+
+    # test_instantiation()
+    # test_default_class_attributes()
+    # test_create_measurement_methods()
+    # print('test: establish_network_connection')
+    # test_establish_network_connection()
+# 
+    # print('test: establish_network_connection_target_network_not_found')
+    # test_establish_network_connection_target_network_not_found()
+# 
+    # print('test: establish_mqtt_connection_good')
+    # test_establish_mqtt_connection_good()
+# 
+    print('test: establish_mqtt_connection_error')
+    test_establish_mqtt_connection_error()
