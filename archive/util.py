@@ -165,3 +165,40 @@ class Networker:
             self._connection = self.establish_connection()
         return self._connection
 
+
+####################################################################################################
+# Seven Segment Display Driver
+####################################################################################################
+
+class SevenSegmentDisplay:
+    def __init__(self, dot_pin, segment_pin_list):
+        self.dot_pin = Pin(dot_pin, Pin.OUT)
+        self.segment_pin_list = segment_pin_list
+        self.pins = {}
+
+        for idx, pin_num in enumerate(segment_pin_list):
+            self.pins[pin_num] = (Pin(pin_num, Pin.OUT))
+
+
+    def display_value(self, value):
+        char_table = {
+            "0": [1,1,1,1,1,1,0],
+            "1": [0,1,1,0,0,0,0],
+            "2": [1,1,0,1,1,0,1],
+            "3": [1,1,1,1,0,0,1],
+            "4": [0,1,1,0,0,1,1],
+            "5": [1,0,1,1,0,1,1],
+            "6": [1,0,1,1,1,1,1],
+            "7": [1,1,1,0,0,0,0],
+            "8": [1,1,1,1,1,1,1],
+            "9": [1,1,1,1,0,1,1],
+            "A": [1,1,1,0,1,1,1],
+            "B": [0,0,1,1,1,1,1],
+            "C": [1,0,0,1,1,1,0],
+            "D": [0,1,1,1,1,0,1],
+            "E": [1,0,0,1,1,1,1],
+            "F": [1,0,0,0,1,1,1],
+        }
+
+        for idx, val in enumerate(char_table[value]):
+            self.pins[self.segment_pin_list[idx]] = val

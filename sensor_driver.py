@@ -4,6 +4,7 @@
 # for pylance:
 # type: ignore
 
+import utime
 from tests import test_sensor_driver
 from umqtt_simple import MQTTClient
 import network
@@ -99,6 +100,7 @@ class SensorDriver:
             self.sensor_status = self.status_codes[
                 ("network", "not_connected_waiting")
             ]
+            utime.sleep(1)
 
         self.network_connection = wlan
         self.sensor_status = self.status_codes[
