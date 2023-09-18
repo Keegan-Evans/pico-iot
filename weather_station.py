@@ -91,7 +91,6 @@ class WeatherStation:
     def update_measurements(self):
         self.measure_rain()
         self.measure_wind_speed()
-        print("updated wind speed")
         self.measure_wind_direction()
 
     def begin(self):
@@ -133,17 +132,14 @@ class WeatherStation:
         dt = tNow - self._lastWindSpeedMillis
 
         if dt < self._calibrationParams["windSpeedMeasurementPeriodMillis"]:
-            print("branch1")
             pass
         elif dt > (
             self._calibrationParams["windSpeedMeasurementPeriodMillis"] * 2
         ):
-            print("branch2")
             self._windCountsPrevious = 0
             self._windCounts = 0
             self._lastWindSpeedMillis = tNow
         else:
-            print("branch3")
             self._windCountsPrevious = self._windCounts
             self._windCounts = 0
             self._lastWindSpeedMillis += self._calibrationParams[
@@ -154,11 +150,9 @@ class WeatherStation:
             float(self._windCountsPrevious)
             / self._calibrationParams["windSpeedMeasurementPeriodMillis"]
         )
-        print(self.wind_speed)
         self.wind_speed *= (
             1000 * self._calibrationParams["kphPerCountPerSec"] / 2
         )
-        print(self.wind_speed)
 
         return None
 
@@ -172,18 +166,17 @@ class WeatherStation:
     def publish(self):
         # try:
         self.mqtt_handler.connect()
-        print(bytes(self.topic, "utf-8"), "\n", self.measurements())
         self.mqtt_handler.publish(
             topic=bytes(self.topic, "utf-8"), msg=self.measurements(), qos=1
         )
         self.mqtt_handler.disconnect()
+        utime.sleep(self.reporting_interval)
         # except OSError.errno == 113:
         #    reset()
 
 
 if __name__ == "__main__":
     wlan = connect_network()
-    print("wlan connected: {}".format(wlan.isconnected()))
     SENSOR_ID = "weather_station_demo_1"
     BROKER_ADDR = "10.42.0.1"
 
