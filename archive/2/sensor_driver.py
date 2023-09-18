@@ -4,14 +4,10 @@
 # for pylance:
 # type: ignore
 
-import utime
-from tests import test_sensor_driver
-from umqtt_simple import MQTTClient
-import network
+# from tests import test_sensor_driver
 
 
 class SensorDriver:
-
     # populate init method parameters from current attributes and add default values
     # TODO: refactor sensor measurements to be a dictionary of pin: measurement
     def __init__(
@@ -145,7 +141,6 @@ class SensorDriver:
 
 
 if __name__ == "__main__":
-    print(dir(SensorDriver().methods))
     # tests to be moved to own file after development
     def test_instantiation():
         sensor_driver = SensorDriver()
